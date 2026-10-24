@@ -1,8 +1,8 @@
 # Computer Vision Experiments
 
-An OpenCV experiment that finds page corners and corrects perspective in number grids, geometric worksheets, and checkerboards.
+An OpenCV experiment that outlines contours in number grids, geometric shapes, and checkerboards, then flattens page perspective.
 
-![Number, shape, and checkerboard examples before and after perspective correction](./project-reel.gif)
+![Number, geometric shape, and checkerboard examples with detected contours and flattened scans](./project-reel.gif)
 
 ## Run it
 
@@ -18,4 +18,4 @@ Place an input image at `paper_photo.jpg`, then run:
 python digitaltype_to_handwrite.py
 ```
 
-The script saves the perspective-corrected page as `scanned_like.png` and opens preview windows.
+The script saves detected contours as `contours.png` and the perspective-corrected page as `scanned_like.png`. It also opens preview windows.
