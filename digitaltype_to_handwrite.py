@@ -14,16 +14,17 @@ gray_blur = cv2.GaussianBlur(gray, (5,5), 0)
 edges = cv2.Canny(gray_blur, 30, 100)  # Try different thresholds
 
 # Find contours
-contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
 # Visualize all contours
 contour_img = img.copy()
 cv2.drawContours(contour_img, contours, -1, (0,255,0), 2)
+cv2.imwrite("contours.png", contour_img)
 cv2.imshow("Contours", contour_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-# Find largest contour (assuming it’s the paper)
+# Find largest contour (assuming it's the paper)
 if contours:
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
     paper_contour = contours[0]
@@ -36,6 +37,15 @@ if contours:
         if len(approx) == 4:
             print("Found 4-corner contour!")
             pts = np.float32([point[0] for point in approx])
+            # Put the corners in top-left, top-right, bottom-right, bottom-left order.
+            ordered = np.zeros((4, 2), dtype="float32")
+            sums = pts.sum(axis=1)
+            diffs = np.diff(pts, axis=1).reshape(-1)
+            ordered[0] = pts[np.argmin(sums)]
+            ordered[2] = pts[np.argmax(sums)]
+            ordered[1] = pts[np.argmin(diffs)]
+            ordered[3] = pts[np.argmax(diffs)]
+            pts = ordered
             width = max(np.linalg.norm(pts[0]-pts[1]), np.linalg.norm(pts[2]-pts[3]))
             height = max(np.linalg.norm(pts[1]-pts[2]), np.linalg.norm(pts[3]-pts[0]))
             dst = np.float32([[0,0],[width,0],[width,height],[0,height]])
